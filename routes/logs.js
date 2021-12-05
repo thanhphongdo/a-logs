@@ -12,6 +12,7 @@ router.get('/', function (req, res, next) {
 router.post('/', function (req, res, next) {
     var data = {
         "url": req.body.url,
+        "method": req.body.method,
         "responseTime": req.body.responseTime,
         "header": req.body.header,
         "payload": req.body.payload,
