@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:5.0.2
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=abcd1234
+    ports:
+      - 27017:27017
+    volumes:
+      - db:/data/db
+  app:
+    depends_on:
+      - mongodb
+    build: .
+    restart: always
+    ports:
+      - 3001:3001
+    environment:
+      - DB_HOST=mongodb
+      - DB_USER=root
+      - DB_PASSWORD=abcd1234
+      - DB_NAME=abc-logs
+      - DB_PORT=27017
+    stdin_open: true
+    tty: true
+  parse-dashboard:
+    image: parseplatform/parse-dashboard
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3002
+      - MOUNT_PATH=/
+      - PARSE_DASHBOARD_SERVER_URL=http://localhost:3001/parse
+      - PARSE_DASHBOARD_MASTER_KEY=myMasterKey
+      - PARSE_DASHBOARD_APP_ID=myAppId
+      - PARSE_DASHBOARD_APP_NAME=MyApp
+      - PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=1
+      - PARSE_DASHBOARD_USER_ID=user
+      - PARSE_DASHBOARD_USER_PASSWORD=1234
+    ports:
+      - 3002:3002
+    depends_on:
+      - app
+    volumes:
+      - ./parse-dashboard-config.json:/src/Parse-Dashboard/parse-dashboard-config.json
+
+volumes:
+  db:

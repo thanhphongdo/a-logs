@@ -13,9 +13,11 @@ var app = express();
 
 var ParseServer = require('parse-server').ParseServer;
 
+const { DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME } = process.env;
 
 var api = new ParseServer({
-  databaseURI: 'mongodb://localhost:27017/acb-logs', // Connection string for your MongoDB database
+  databaseURI: `mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?authSource=admin`, // Connection string for your MongoDB database
+  // databaseURI: 'mongodb://localhost:27017/acb-logs', // Connection string for your MongoDB database
   cloud: './cloud/main.js', // Path to your Cloud Code
   appId: 'myAppId',
   masterKey: 'myMasterKey', // Keep this key secret!
@@ -34,13 +36,11 @@ var dashboard = new ParseDashboard({
       "appName": "MyApp"
     }
   ]
-});
+}, { allowInsecureHTTP: true });
 
 var allowedOrigins = [
   'http://localhost:4400',
-  'http://localhost:3001',
-  'http://127.0.0.1:4400',
-  'http://127.0.0.1:3001',
+  'http://localhost:3002'
 ];
 
 app.use(cors({
@@ -56,19 +56,9 @@ app.use(cors({
   }
 }));
 
-// app.options('*', cors());
-// app.use(function (req, res, next) {
-//   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4400');
-//   next();
-// });
-
 app.use('/parse', api);
 
 app.use('/dashboard', dashboard);
-
-// app.listen(3001, function () {
-//   console.log('parse-server-example running on port 3001.');
-// });
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

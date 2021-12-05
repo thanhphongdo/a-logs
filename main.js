@@ -11,8 +11,8 @@ const logger = winston.createLogger({
     ],
 });
 
-const baseSharedUrl = 'https://acb-dev-shared-gateway.creditstrong.com';
-const baseConsumerUrl = 'https://acb-dev-consumer-gateway.creditstrong.com';
+const baseSharedUrl = 'https://acb-qa-shared-gateway.creditstrong.com';
+const baseConsumerUrl = 'https://acb-qa-consumer-gateway.creditstrong.com';
 // const baseSharedUrl = 'https://acb-qa-shared-gateway.creditstrong.com';
 // const baseConsumerUrl = 'https://acb-qa-consumer-gateway.creditstrong.com';
 // const baseSharedUrl = 'https://229a-2402-800-63a8-9d23-f820-e93e-9c81-285a.ap.ngrok.io';
