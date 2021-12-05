@@ -2,45 +2,48 @@ version: "3.8"
 
 services:
   mongodb:
+    env_file: ./.env
     image: mongo:5.0.2
     restart: always
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=abcd1234
+      - MONGO_INITDB_ROOT_USERNAME=$MONGODB_USER
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD
     ports:
-      - 27017:27017
+      - $MONGODB_PORT:$MONGODB_PORT
     volumes:
       - db:/data/db
   app:
+    env_file: ./.env
     depends_on:
       - mongodb
     build: .
     restart: always
     ports:
-      - 3001:3001
+      - $PARSE_SERVER_PORT:$PARSE_SERVER_PORT
     environment:
       - DB_HOST=mongodb
-      - DB_USER=root
-      - DB_PASSWORD=abcd1234
-      - DB_NAME=abc-logs
-      - DB_PORT=27017
+      - DB_USER=$MONGODB_USER
+      - DB_PASSWORD=$MONGODB_PASSWORD
+      - DB_NAME=$MONGODB_DATABASE
+      - DB_PORT=$MONGODB_PORT
     stdin_open: true
     tty: true
   parse-dashboard:
+    env_file: ./.env
     image: parseplatform/parse-dashboard
     environment:
-      - HOST=0.0.0.0
-      - PORT=3002
-      - MOUNT_PATH=/
-      - PARSE_DASHBOARD_SERVER_URL=http://localhost:3001/parse
-      - PARSE_DASHBOARD_MASTER_KEY=myMasterKey
-      - PARSE_DASHBOARD_APP_ID=myAppId
-      - PARSE_DASHBOARD_APP_NAME=MyApp
-      - PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=1
-      - PARSE_DASHBOARD_USER_ID=user
-      - PARSE_DASHBOARD_USER_PASSWORD=1234
+      - HOST=$PARSE_DASHBOARD_HOST
+      - PORT=$PARSE_DASHBOARD_PORT
+      - MOUNT_PATH=$PARSE_DASHBOARD_MOUNT_PATH
+      - PARSE_DASHBOARD_SERVER_URL=$PARSE_DASHBOARD_SERVER_URL
+      - PARSE_DASHBOARD_MASTER_KEY=$PARSE_DASHBOARD_MASTER_KEY
+      - PARSE_DASHBOARD_APP_ID=$PARSE_DASHBOARD_APP_ID
+      - PARSE_DASHBOARD_APP_NAME=$PARSE_DASHBOARD_APP_NAME
+      - PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=$PARSE_DASHBOARD_ALLOW_INSECURE_HTTP
+      - PARSE_DASHBOARD_USER_ID=$PARSE_DASHBOARD_USER_ID
+      - PARSE_DASHBOARD_USER_PASSWORD=$PARSE_DASHBOARD_USER_PASSWORD
     ports:
-      - 3002:3002
+      - $PARSE_DASHBOARD_PORT:$PARSE_DASHBOARD_PORT
     depends_on:
       - app
     volumes:
